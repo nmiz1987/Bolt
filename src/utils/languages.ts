@@ -1,10 +1,11 @@
 import { CountriesProps } from '@/i18n/interfaces';
 import { countries } from '@/i18n/languages';
 import { localStorage } from '@/services/storage';
+import { I18nManager } from 'react-native';
 
 // Retrieve the language from AsyncStorage
 export async function getStoredLanguage(): Promise<CountriesProps> {
-  const fallbackLanguage: CountriesProps = countries.en; // Fallback to Hebrew if no language is stored
+  const fallbackLanguage: CountriesProps = I18nManager.isRTL ? countries.he : countries.en; // Fallback to the phone language if no language is stored
   try {
     const usersLanguage = await localStorage.loadStringAsync('appLanguage');
     if (usersLanguage) {

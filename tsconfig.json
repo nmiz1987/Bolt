@@ -25,7 +25,7 @@
     "lib": ["esnext", "dom"],
     "skipLibCheck": true,
     "baseUrl": "./",
-    "jsx": "react-native",
+    "jsx": "react-jsx",
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "exclude": ["node_modules", "babel.config.js", "metro.config.js"],
