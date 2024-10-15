@@ -1,13 +1,18 @@
 {
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "allowJs": false,
     "strict": true,
     "paths": {
       "@/*": ["./src/*"]
     },
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "checkJs": true,
     "module": "es2022",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
@@ -20,7 +25,7 @@
     "lib": ["esnext", "dom"],
     "skipLibCheck": true,
     "baseUrl": "./",
-    "jsx": "react-jsx",
+    "jsx": "react-native",
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "exclude": ["node_modules", "babel.config.js", "metro.config.js"],
