@@ -1,5 +1,11 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
+/**
+ * Use ts-node here so we can use TypeScript for our Config Plugins
+ * and not have to compile them to JavaScript
+ */
+require('ts-node/register');
+
 // These values are tied to EAS. If you would like to use EAS Build or Update
 // on this project while playing with it, then remove these values and run
 // `eas init` and `eas update:configure` to get new values for your account.
@@ -69,7 +75,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: '#2b2863',
     },
   },
-  plugins: ['expo-router', 'expo-localization'],
+  plugins: ['expo-router', 'expo-localization', require('./plugins/withSplashScreen').withSplashScreen],
   extra: {
     // eas: {
     //   projectId: EAS_PROJECT_ID,

@@ -52,7 +52,7 @@ export function KeyboardAvoidView({ children, yOffset = 10, style }: KeyboardAvo
   };
 
   const measureTextInput = (textRef: any, e: KeyboardEvent) => {
-    textRef.measureInWindow((x, y, width, height) => {
+    textRef.measureInWindow((x: number, y: number, width: number, height: number) => {
       const keyboardHeight = e.endCoordinates.height;
       const elementBottom = y + height;
       const keyboardTop = screenDimensions - keyboardHeight;
@@ -76,7 +76,7 @@ export function KeyboardAvoidView({ children, yOffset = 10, style }: KeyboardAvo
     }).start();
   };
 
-  if (Platform.OS === 'web') return <>{children}</>;
+  if (Platform.OS === 'web') return { children };
 
   return (
     <Animated.View ref={ref} style={[{ transform: [{ translateY: kbOffsetAnim }] }, style]}>
