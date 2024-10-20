@@ -2,8 +2,7 @@ import { initializeI18n } from '@/i18n/i18n';
 import '../theme/global.css';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useFonts } from 'expo-font';
-import { ErrorBoundaryProps, Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
+import { ErrorBoundaryProps, Stack, SplashScreen } from 'expo-router';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import * as Updates from 'expo-updates';
@@ -12,6 +11,10 @@ import { AppContextProvider } from '@/store/AppContextProvider';
 import { CustomErrorBoundary } from '@/components/CustomErrorBoundary/CustomErrorBoundary';
 import { Box } from '@/components/Box/Box';
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
+
+// Expo Router uses Error Boundaries to catch errors in the navigation tree.
 // This MUST be here to catch errors in the navigation tree.
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   return <CustomErrorBoundary error={error} retry={retry} />;
@@ -22,36 +25,49 @@ export const unstable_settings = {
   initialRouteName: '(drawer)',
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
 export default function RootLayout() {
-  const [isAppReady, setAppReady] = useState(false);
+  const [isI18nInitialized, setIsI18nInitialized] = useState(false);
+
+  // check for OTA updates
+  useEffect(() => {
+    async function fetchUpdate() {
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+          DevSettings.reload();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    if (!__DEV__ && Platform.OS !== 'web') fetchUpdate();
+  }, []);
+
   // initialize i18n
   useEffect(() => {
-    initializeI18n();
+    initializeI18n().then(() => setIsI18nInitialized(true));
   }, []);
 
   //load fonts
-  const [loaded, error] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+    if (fontError) throw fontError;
+  }, [fontError]);
+
+  const appIsReady = isI18nInitialized && fontsLoaded;
 
   useEffect(() => {
-    if (loaded) {
-      setTimeout(() => {
-        SplashScreen.hideAsync();
-        setAppReady(true);
-      }, 500);
+    if (appIsReady) {
+      SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [appIsReady]);
 
-  if (!isAppReady) {
+  if (!appIsReady) {
     // Before we show the app, we have to wait for our state to be ready.
     // In the meantime, don't render anything. This will be the background
     // color set in native by rootView's background color.
@@ -77,22 +93,6 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  useEffect(() => {
-    async function fetchUpdate() {
-      try {
-        const update = await Updates.checkForUpdateAsync();
-        if (update.isAvailable) {
-          await Updates.fetchUpdateAsync();
-          await Updates.reloadAsync();
-          DevSettings.reload();
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    if (!__DEV__ && Platform.OS !== 'web') fetchUpdate();
-  }, []);
-
   return (
     <AppContextProvider>
       <Stack>

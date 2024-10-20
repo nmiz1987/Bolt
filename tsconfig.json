@@ -1,13 +1,18 @@
 {
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "allowJs": false,
     "strict": true,
     "paths": {
       "@/*": ["./src/*"]
     },
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "checkJs": true,
     "module": "es2022",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
